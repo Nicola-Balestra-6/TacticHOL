@@ -24,7 +24,9 @@ echo "[build_chrono_exact] Starting minimal HOL session..."
 echo "  Output: $OUTPUT"
 echo ""
 
-HOL_ML_PATH="$ROOT_DIR/hol_min/hol_min.ml" \
+# LINE_EDITOR=env: without ledit in front of the toplevel, the exit status
+# of hol.sh is that of the session, and a session that dies stops the script.
+HOL_ML_PATH="$ROOT_DIR/hol_min/hol_min.ml" LINE_EDITOR=env \
   "$HOL_ROOT/hol.sh" <<EOF
 
 (* --- Load infrastructure --- *)
@@ -151,15 +153,15 @@ chrono_summary ();;
 exit 0;;
 EOF
 
+if [ ! -s "$OUTPUT" ]; then
+  echo "[build_chrono_exact] STOP: the session left no index at $OUTPUT" >&2
+  exit 1
+fi
+
 echo "[build_chrono_exact] Applying ordering fixes..."
 python3 "$ROOT_DIR/scripts/dataset/fix_chrono_index.py" "$OUTPUT"
 
 echo ""
 echo "[build_chrono_exact] Done."
 echo "  Output: $OUTPUT"
-if [ -f "$OUTPUT" ]; then
-  LINES=$(wc -l < "$OUTPUT")
-  echo "  Total: $LINES theorems"
-else
-  echo "  ERROR: output file not created"
-fi
+echo "  Total: $(wc -l < "$OUTPUT") theorems"
