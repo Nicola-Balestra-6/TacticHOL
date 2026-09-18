@@ -108,8 +108,7 @@ session, so no chronological run can share a REPL with it.
 
 `examples/cauchy_schwarz.ml` proves the Cauchy-Schwarz inequality in
 two dimensions as a chain of three calls to `tactichol` and one manual
-composition, after the model of the TacticToe example on the
-irrationality of the square root of 2.
+composition.
 
 ## 3. Reproduce the evaluation
 
