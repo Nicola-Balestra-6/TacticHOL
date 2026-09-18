@@ -45,11 +45,16 @@ there.
 - HOL Light at commit `157c99b7` of https://github.com/jrh13/hol-light
   (release 3.1.0 plus the support for Camlp5 8.03.06; none of the files
   that `hol.ml` loads differs from the release), built in its root
-  directory with `make switch-5`, `eval $(opam env)` and `make`, as its
-  README says. This creates a local opam switch with OCaml 5.2.0 and
-  Camlp5 8.03.06 and produces `pa_j.cmo` and `hol.sh`. The scripts run
-  HOL Light through `hol.sh` and use the opam switch of the HOL Light
-  root, or the one named by the environment variable `TT_OPAM_SWITCH`.
+  directory with `OPAMYES=1 make switch-5`, then `eval $(opam env)`,
+  then `make`, as its README says. The first creates a local opam
+  switch with OCaml 5.2.0 and Camlp5 8.03.06 (`OPAMYES=1` answers the
+  questions opam asks, which stop the build when no terminal is
+  attached); the third produces `pa_j.cmo` and `hol.sh`, and must run
+  with that switch active, since it picks the `update_database.ml`
+  variant of the OCaml it finds and does not rebuild it later. The
+  scripts run HOL Light through `hol.sh` and use the opam switch of the
+  HOL Light root, or the one named by the environment variable
+  `TT_OPAM_SWITCH`.
 - The recording sessions use the minimal HOL Light session of
   `hol_min/hol_min.ml`, which loads the kernel, `bool`, `drule` and
   `tactics` and nothing after them.
