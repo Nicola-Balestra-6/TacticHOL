@@ -68,9 +68,10 @@ there.
 `.devcontainer/` builds all of the above from a bare Ubuntu 22.04:
 opening this directory in VS Code with the Dev Containers extension
 ("Reopen in Container") produces a container with HOL Light built in
-`/root/hol-light` and this directory mounted at
-`/root/hol-light/TacticHOL`. The image takes a few minutes to build;
-the corpus is then built as below.
+`/home/vscode/hol-light`, this directory mounted at
+`/home/vscode/hol-light/TacticHOL`, and the opam switch active in
+every terminal. The image takes a few minutes to build; the corpus is
+then built as below.
 
 ## 1. Build the corpus
 
