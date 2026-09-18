@@ -65,6 +65,13 @@ there.
   in this directory names anything missing.
 - Python 3, for the dataset scripts and the model call.
 
+`.devcontainer/` builds all of the above from a bare Ubuntu 22.04:
+opening this directory in VS Code with the Dev Containers extension
+("Reopen in Container") produces a container with HOL Light built in
+`/root/hol-light` and this directory mounted at
+`/root/hol-light/TacticHOL`. The image takes a few minutes to build;
+the corpus is then built as below.
+
 ## 1. Build the corpus
 
     ./scripts/build_corpus.sh

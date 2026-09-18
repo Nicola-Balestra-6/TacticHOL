@@ -1,0 +1,12 @@
+{
+  "name": "TacticHOL",
+  "build": { "dockerfile": "Dockerfile" },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/root/hol-light/TacticHOL,type=bind,consistency=cached",
+  "workspaceFolder": "/root/hol-light/TacticHOL",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": ["monadius.hol-light-simple"]
+    }
+  }
+}

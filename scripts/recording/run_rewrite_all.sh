@@ -49,7 +49,6 @@ THEORIES=(
   define
 )
 
-dune clean
 dune build
 
 # Rewrite all the .ml files in HOL Light lib, saving the rewritten versions in z_lib/
