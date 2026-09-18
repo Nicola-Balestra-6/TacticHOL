@@ -70,8 +70,9 @@ opening this directory in VS Code with the Dev Containers extension
 ("Reopen in Container") produces a container with HOL Light built in
 `/home/vscode/hol-light`, this directory mounted at
 `/home/vscode/hol-light/TacticHOL`, and the opam switch active in
-every terminal. The image takes a few minutes to build; the corpus is
-then built as below.
+every terminal. VS Code opens the HOL Light root, with this directory
+inside it; terminals start there, so `cd TacticHOL` first. The image
+takes a few minutes to build; the corpus is then built as below.
 
 ## 1. Build the corpus
 

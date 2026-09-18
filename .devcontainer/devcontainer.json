@@ -3,11 +3,19 @@
   "build": { "dockerfile": "Dockerfile" },
   "runArgs": ["--hostname=tactichol"],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/hol-light/TacticHOL,type=bind,consistency=cached",
-  "workspaceFolder": "/home/vscode/hol-light/TacticHOL",
+  "workspaceFolder": "/home/vscode/hol-light",
   "remoteUser": "vscode",
   "customizations": {
     "vscode": {
-      "extensions": ["monadius.hol-light-simple"]
+      "extensions": ["monadius.hol-light-simple"],
+      "settings": {
+        "files.associations": {
+          "*.ml": "hol-light-ocaml",
+          "*.hl": "hol-light-ocaml"
+        },
+        "hol-light.path": "/home/vscode/hol-light",
+        "hol-light.exePaths": ["/home/vscode/hol-light/hol.sh"]
+      }
     }
   }
 }
