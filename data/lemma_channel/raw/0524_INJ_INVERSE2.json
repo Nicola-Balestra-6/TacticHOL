@@ -1,0 +1,42 @@
+{
+ "position": 524,
+ "name": "INJ_INVERSE2",
+ "model_requested": "claude-opus-5",
+ "prompt": "You are an expert in HOL Light interactive theorem proving.\n\nA proof search system is trying to prove the following goal, and has failed:\n\n    forall (P:A->B->C).     (forall (x1:A) (y1:B) (x2:A) (y2:B).          (P:A->B->C) (x1:A) (y1:B) = (P:A->B->C) (x2:A) (y2:B) <=>          (x1:A) = (x2:A) /\\ (y1:B) = (y2:B))     ==> (exists (X:C->A) (Y:C->B).              forall (x:A) (y:B).                  (X:C->A) ((P:A->B->C) (x:A) (y:B)) = (x:A) /\\                  (Y:C->B) ((P:A->B->C) (x:A) (y:B)) = (y:B))\n\nPropose 8 candidate lemmas A such that the tactic\n\n    SUBGOAL_THEN `A` ASSUME_TAC\n\nwould split the proof usefully. Each A must be:\n  (1) a PROPOSITION, i.e. a term of type bool -- a statement, not a value.\n      Write  x + x = x, never  x + x\n  (2) true;\n  (3) provable from standard HOL Light theory;\n  (4) genuinely helpful for proving the goal once assumed;\n  (5) explicitly type-annotated: give the type of every variable you\n      introduce, in the form (x:num), (s:A->bool), (f:A->B). Write\n      !(n:num). n + 0 = n, not !n. n + 0 = n.\n\nAll 8 lemmas must be DISTINCT: no repetitions, no trivial restatements of\none another.\n\nRank them by estimated usefulness, most useful first. Position 1 must be the\nlemma you consider most likely to be both true and helpful; position 8 the\nleast. This ordering is recorded and measured, so make it deliberate rather\nthan incidental.\n\nOutput format: write each lemma in HOL Light term syntax between the two\nmarker lines shown here, and nothing else. Each marker must be ALONE on its\nown line, with nothing before or after it on that line.\n\n#LEMMA\nfirst lemma\n#END\n#LEMMA\nsecond lemma\n#END\n\nDo not use backquotes. Do not number the lines. Do not write anything outside\nthe blocks.",
+ "request": {
+  "effort": "low",
+  "k": 8,
+  "max_tokens": 20000,
+  "stream": true,
+  "generator_sha1": "5f301c07991d5350daa9ec88e34ea68ed93481e4"
+ },
+ "response": {
+  "model": "claude-opus-5",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": ""
+   },
+   {
+    "type": "text",
+    "text": "#LEMMA\n!(P:A->B->C). (!(x1:A) (y1:B) (x2:A) (y2:B). P x1 y1 = P x2 y2 <=> x1 = x2 /\\ y1 = y2) ==> (?(F:C->A#B). !(x:A) (y:B). F (P x y) = (x,y))\n#END\n#LEMMA\n!(P:A->B->C). (!(x1:A) (y1:B) (x2:A) (y2:B). P x1 y1 = P x2 y2 <=> x1 = x2 /\\ y1 = y2) ==> (!(x:A) (y:B). (@(p:A#B). P (FST p) (SND p) = P x y) = (x,y))\n#END\n#LEMMA\n!(g:C->A#B). ?(X:C->A) (Y:C->B). !(c:C). X c = FST (g c) /\\ Y c = SND (g c)\n#END\n#LEMMA\n!(Q:A->bool) (a:A). Q a ==> Q (@(x:A). Q x)\n#END\n#LEMMA\n!(x:A) (y:B). FST ((x,y):A#B) = x /\\ SND ((x,y):A#B) = y\n#END\n#LEMMA\n!(p:A#B). (FST p, SND p) = p\n#END\n#LEMMA\n!(P:A->B->C). (!(x1:A) (y1:B) (x2:A) (y2:B). P x1 y1 = P x2 y2 <=> x1 = x2 /\\ y1 = y2) ==> (!(x1:A) (y1:B) (x2:A) (y2:B). P x1 y1 = P x2 y2 ==> x1 = x2)\n#END\n#LEMMA\n!(x:A) (y:B) (u:A) (v:B). ((x,y):A#B) = (u,v) <=> x = u /\\ y = v\n#END"
+   }
+  ],
+  "stop_reason": "end_turn",
+  "usage": {
+   "input_tokens": 763,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 1269,
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "output_tokens_details": {
+    "thinking_tokens": 631
+   }
+  }
+ }
+}

@@ -1,0 +1,11 @@
+(library
+ (name prove_rewrite)
+ (modules
+  tactic_rewrite
+  ocaml_prove_rewrite)
+ (private_modules tactic_rewrite)
+ (libraries
+  tactic_grammar
+  dynlink
+  camlp5
+  camlp5.pa_o.link))

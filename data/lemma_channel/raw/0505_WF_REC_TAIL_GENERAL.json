@@ -1,0 +1,42 @@
+{
+ "position": 505,
+ "name": "WF_REC_TAIL_GENERAL",
+ "model_requested": "claude-opus-5",
+ "prompt": "You are an expert in HOL Light interactive theorem proving.\n\nA proof search system is trying to prove the following goal, and has failed:\n\n    forall (P:(A->B)->A->bool) (G:(A->B)->A->A) (H:(A->B)->A->B).     (WF:(A->A->bool)->bool) ((<<):A->A->bool) /\\     (forall (f:A->B) (g:A->B) (x:A).          (forall (z:A). (z:A) << (x:A) ==> (f:A->B) (z:A) = (g:A->B) (z:A))          ==> ((P:(A->B)->A->bool) (f:A->B) (x:A) <=>               (P:(A->B)->A->bool) (g:A->B) (x:A)) /\\              (G:(A->B)->A->A) (f:A->B) (x:A) =              (G:(A->B)->A->A) (g:A->B) (x:A) /\\              (H:(A->B)->A->B) (f:A->B) (x:A) =              (H:(A->B)->A->B) (g:A->B) (x:A)) /\\     (forall (f:A->B) (g:A->B) (x:A).          (forall (z:A). (z:A) << (x:A) ==> (f:A->B) (z:A) = (g:A->B) (z:A))          ==> (H:(A->B)->A->B) (f:A->B) (x:A) =              (H:(A->B)->A->B) (g:A->B) (x:A)) /\\     (forall (f:A->B) (x:A) (y:A).          (P:(A->B)->A->bool) (f:A->B) (x:A) /\\          (y:A) << (G:(A->B)->A->A) (f:A->B) (x:A)          ==> (y:A) << (x:A))     ==> (exists (f:A->B).              forall (x:A).                  (f:A->B) (x:A) =                  (if (P:(A->B)->A->bool) (f:A->B) (x:A)                   then (f:A->B) ((G:(A->B)->A->A) (f:A->B) (x:A))                   else (H:(A->B)->A->B) (f:A->B) (x:A)))\n\nPropose 8 candidate lemmas A such that the tactic\n\n    SUBGOAL_THEN `A` ASSUME_TAC\n\nwould split the proof usefully. Each A must be:\n  (1) a PROPOSITION, i.e. a term of type bool -- a statement, not a value.\n      Write  x + x = x, never  x + x\n  (2) true;\n  (3) provable from standard HOL Light theory;\n  (4) genuinely helpful for proving the goal once assumed;\n  (5) explicitly type-annotated: give the type of every variable you\n      introduce, in the form (x:num), (s:A->bool), (f:A->B). Write\n      !(n:num). n + 0 = n, not !n. n + 0 = n.\n\nAll 8 lemmas must be DISTINCT: no repetitions, no trivial restatements of\none another.\n\nRank them by estimated usefulness, most useful first. Position 1 must be the\nlemma you consider most likely to be both true and helpful; position 8 the\nleast. This ordering is recorded and measured, so make it deliberate rather\nthan incidental.\n\nOutput format: write each lemma in HOL Light term syntax between the two\nmarker lines shown here, and nothing else. Each marker must be ALONE on its\nown line, with nothing before or after it on that line.\n\n#LEMMA\nfirst lemma\n#END\n#LEMMA\nsecond lemma\n#END\n\nDo not use backquotes. Do not number the lines. Do not write anything outside\nthe blocks.",
+ "request": {
+  "effort": "low",
+  "k": 8,
+  "max_tokens": 20000,
+  "stream": true,
+  "generator_sha1": "5f301c07991d5350daa9ec88e34ea68ed93481e4"
+ },
+ "response": {
+  "model": "claude-opus-5",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": ""
+   },
+   {
+    "type": "text",
+    "text": "#LEMMA\n!(lt:A->A->bool) (E:(A->B)->A->B). WF lt /\\ (!(f:A->B) (g:A->B) (x:A). (!(z:A). lt z x ==> f z = g z) ==> E f x = E g x) ==> (?(f:A->B). !(x:A). f x = E f x)\n#END\n#LEMMA\n!(lt:A->A->bool). WF lt <=> (!(Q:A->bool). (!(x:A). (!(y:A). lt y x ==> Q y) ==> Q x) ==> (!(x:A). Q x))\n#END\n#LEMMA\n!(P:A->bool) (g:A->A) (h:A->B). ?(f:A->B). !(x:A). f x = (if P x then f (g x) else h x)\n#END\n#LEMMA\n!(lt:A->A->bool). WF lt <=> (!(Q:A->bool). (?(x:A). Q x) ==> (?(x:A). Q x /\\ !(y:A). lt y x ==> ~(Q y)))\n#END\n#LEMMA\n!(lt:A->A->bool). WF lt ==> !(x:A). ~(lt x x)\n#END\n#LEMMA\n!(lt:A->A->bool) (E:(A->B)->A->B) (f:A->B) (g:A->B). WF lt /\\ (!(f1:A->B) (g1:A->B) (x:A). (!(z:A). lt z x ==> f1 z = g1 z) ==> E f1 x = E g1 x) /\\ (!(x:A). f x = E f x) /\\ (!(x:A). g x = E g x) ==> (!(x:A). f x = g x)\n#END\n#LEMMA\n!(lt:A->A->bool). WF lt ==> ~(?(s:num->A). !(n:num). lt (s (SUC n)) (s n))\n#END\n#LEMMA\n!(lt:A->A->bool) (Q:A->bool). WF lt /\\ (?(x:A). Q x) ==> (?(x:A). Q x /\\ !(y:A). lt y x ==> ~(Q y))\n#END"
+   }
+  ],
+  "stop_reason": "end_turn",
+  "usage": {
+   "input_tokens": 1215,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 1563,
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "output_tokens_details": {
+    "thinking_tokens": 839
+   }
+  }
+ }
+}

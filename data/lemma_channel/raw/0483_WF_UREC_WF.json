@@ -1,0 +1,42 @@
+{
+ "position": 483,
+ "name": "WF_UREC_WF",
+ "model_requested": "claude-opus-5",
+ "prompt": "You are an expert in HOL Light interactive theorem proving.\n\nA proof search system is trying to prove the following goal, and has failed:\n\n    (forall (H:(A->bool)->A->bool).      (forall (f:A->bool) (g:A->bool) (x:A).           (forall (z:A).                (z:A) << (x:A) ==> ((f:A->bool) (z:A) <=> (g:A->bool) (z:A)))           ==> ((H:(A->bool)->A->bool) (f:A->bool) (x:A) <=>                (H:(A->bool)->A->bool) (g:A->bool) (x:A)))      ==> (forall (f:A->bool) (g:A->bool).               (forall (x:A).                    (f:A->bool) (x:A) <=>                    (H:(A->bool)->A->bool) (f:A->bool) (x:A)) /\\               (forall (x:A).                    (g:A->bool) (x:A) <=>                    (H:(A->bool)->A->bool) (g:A->bool) (x:A))               ==> (f:A->bool) = (g:A->bool))) ==> (WF:(A->A->bool)->bool) ((<<):A->A->bool)\n\nPropose 8 candidate lemmas A such that the tactic\n\n    SUBGOAL_THEN `A` ASSUME_TAC\n\nwould split the proof usefully. Each A must be:\n  (1) a PROPOSITION, i.e. a term of type bool -- a statement, not a value.\n      Write  x + x = x, never  x + x\n  (2) true;\n  (3) provable from standard HOL Light theory;\n  (4) genuinely helpful for proving the goal once assumed;\n  (5) explicitly type-annotated: give the type of every variable you\n      introduce, in the form (x:num), (s:A->bool), (f:A->B). Write\n      !(n:num). n + 0 = n, not !n. n + 0 = n.\n\nAll 8 lemmas must be DISTINCT: no repetitions, no trivial restatements of\none another.\n\nRank them by estimated usefulness, most useful first. Position 1 must be the\nlemma you consider most likely to be both true and helpful; position 8 the\nleast. This ordering is recorded and measured, so make it deliberate rather\nthan incidental.\n\nOutput format: write each lemma in HOL Light term syntax between the two\nmarker lines shown here, and nothing else. Each marker must be ALONE on its\nown line, with nothing before or after it on that line.\n\n#LEMMA\nfirst lemma\n#END\n#LEMMA\nsecond lemma\n#END\n\nDo not use backquotes. Do not number the lines. Do not write anything outside\nthe blocks.",
+ "request": {
+  "effort": "low",
+  "k": 8,
+  "max_tokens": 20000,
+  "stream": true,
+  "generator_sha1": "5f301c07991d5350daa9ec88e34ea68ed93481e4"
+ },
+ "response": {
+  "model": "claude-opus-5",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": ""
+   },
+   {
+    "type": "text",
+    "text": "#LEMMA\n!(l:A->A->bool). WF l <=> ~(?s:num->A. !n:num. l (s (SUC n)) (s n))\n#END\n#LEMMA\n!(f:A->bool) (g:A->bool) (x:A). (!z:A. z << x ==> (f z <=> g z)) ==> ((?z:A. z << x /\\ f z) <=> (?z:A. z << x /\\ g z))\n#END\n#LEMMA\n!(x:A). ((\\y:A. F) x <=> (?z:A. z << x /\\ (\\y:A. F) z))\n#END\n#LEMMA\n!(x:A). ((\\y:A. ?s:num->A. s 0 = y /\\ (!n:num. s (SUC n) << s n)) x <=> (?z:A. z << x /\\ (\\y:A. ?s:num->A. s 0 = y /\\ (!n:num. s (SUC n) << s n)) z))\n#END\n#LEMMA\n(?s:num->A. !n:num. s (SUC n) << s n) ==> ~((\\y:A. F) = (\\y:A. ?s:num->A. s 0 = y /\\ (!n:num. s (SUC n) << s n)))\n#END\n#LEMMA\n!(l:A->A->bool). WF l <=> (!P:A->bool. (?x:A. P x) ==> (?x:A. P x /\\ !y:A. l y x ==> ~(P y)))\n#END\n#LEMMA\n!(l:A->A->bool). WF l <=> (!P:A->bool. (!x:A. (!y:A. l y x ==> P y) ==> P x) ==> (!x:A. P x))\n#END\n#LEMMA\n!(f:A->bool) (g:A->bool). (!x:A. f x <=> g x) ==> f = g\n#END"
+   }
+  ],
+  "stop_reason": "end_turn",
+  "usage": {
+   "input_tokens": 894,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 1690,
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "output_tokens_details": {
+    "thinking_tokens": 1078
+   }
+  }
+ }
+}

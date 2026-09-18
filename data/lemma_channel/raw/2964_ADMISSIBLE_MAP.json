@@ -1,0 +1,42 @@
+{
+ "position": 2964,
+ "name": "ADMISSIBLE_MAP",
+ "model_requested": "claude-opus-5",
+ "prompt": "You are an expert in HOL Light interactive theorem proving.\n\nA proof search system is trying to prove the following goal, and has failed:\n\n    forall ((<<):F->C->bool) (p:(F->G)->H->bool) (s:H->C) (h:(F->G)->H->E->D)      (l:(F->G)->H->(E)list).     (admissible:(F->C->bool)->((F->G)->H->bool)->(H->C)->((F->G)->H->(E)list)->bool)     ((<<):F->C->bool)     (p:(F->G)->H->bool)     (s:H->C)     (l:(F->G)->H->(E)list) /\\     (admissible:(F->C->bool)->((F->G)->E#H->bool)->(E#H->C)->((F->G)->E#H->D)->bool)     ((<<):F->C->bool)     (\\(fe:F->G) ((y:E),(x:H)).          (p:(F->G)->H->bool) (fe:F->G) (x:H) /\\          (MEM:E->(E)list->bool) (y:E)          ((l:(F->G)->H->(E)list) (fe:F->G) (x:H)))     (\\((y:E),(x:H)). (s:H->C) (x:H))     (\\(fb:F->G) ((y:E),(x:H)). (h:(F->G)->H->E->D) (fb:F->G) (x:H) (y:E))     ==> (admissible:(F->C->bool)->((F->G)->H->bool)->(H->C)->((F->G)->H->(D)list)->bool)         ((<<):F->C->bool)         (p:(F->G)->H->bool)         (s:H->C)         (\\(fa:F->G) (x:H).              (MAP:(E->D)->(E)list->(D)list)              ((h:(F->G)->H->E->D) (fa:F->G) (x:H))              ((l:(F->G)->H->(E)list) (fa:F->G) (x:H)))\n\nPropose 8 candidate lemmas A such that the tactic\n\n    SUBGOAL_THEN `A` ASSUME_TAC\n\nwould split the proof usefully. Each A must be:\n  (1) a PROPOSITION, i.e. a term of type bool -- a statement, not a value.\n      Write  x + x = x, never  x + x\n  (2) true;\n  (3) provable from standard HOL Light theory;\n  (4) genuinely helpful for proving the goal once assumed;\n  (5) explicitly type-annotated: give the type of every variable you\n      introduce, in the form (x:num), (s:A->bool), (f:A->B). Write\n      !(n:num). n + 0 = n, not !n. n + 0 = n.\n\nAll 8 lemmas must be DISTINCT: no repetitions, no trivial restatements of\none another.\n\nRank them by estimated usefulness, most useful first. Position 1 must be the\nlemma you consider most likely to be both true and helpful; position 8 the\nleast. This ordering is recorded and measured, so make it deliberate rather\nthan incidental.\n\nOutput format: write each lemma in HOL Light term syntax between the two\nmarker lines shown here, and nothing else. Each marker must be ALONE on its\nown line, with nothing before or after it on that line.\n\n#LEMMA\nfirst lemma\n#END\n#LEMMA\nsecond lemma\n#END\n\nDo not use backquotes. Do not number the lines. Do not write anything outside\nthe blocks.",
+ "request": {
+  "effort": "low",
+  "k": 8,
+  "max_tokens": 20000,
+  "stream": true,
+  "generator_sha1": "5f301c07991d5350daa9ec88e34ea68ed93481e4"
+ },
+ "response": {
+  "model": "claude-opus-5",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": ""
+   },
+   {
+    "type": "text",
+    "text": "#LEMMA\n!(f:E->D) (g:E->D) (l:(E)list). (!(x:E). MEM x l ==> f x = g x) ==> MAP f l = MAP g l\n#END\n#LEMMA\n!(f:E->D) (l:(E)list) (y:D). MEM y (MAP f l) <=> ?(x:E). MEM x l /\\ y = f x\n#END\n#LEMMA\n!(f:E->D) (l:(E)list). LENGTH (MAP f l) = LENGTH l\n#END\n#LEMMA\n!(f:E->D) (x:E) (l:(E)list). MAP f (CONS x l) = CONS (f x) (MAP f l)\n#END\n#LEMMA\n!(f:E->D). MAP f ([]:(E)list) = ([]:(D)list)\n#END\n#LEMMA\n!(x:E) (l:(E)list). MEM x (CONS x l)\n#END\n#LEMMA\n!(x:E) (y:E) (l:(E)list). MEM x l ==> MEM x (CONS y l)\n#END\n#LEMMA\n!(l1:(E)list) (l2:(E)list). (!(x:E). MEM x l1 <=> MEM x l2) ==> (l1 = [] <=> l2 = [])\n#END"
+   }
+  ],
+  "stop_reason": "end_turn",
+  "usage": {
+   "input_tokens": 1152,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 519,
+   "service_tier": "standard",
+   "inference_geo": "global",
+   "output_tokens_details": {
+    "thinking_tokens": 80
+   }
+  }
+ }
+}

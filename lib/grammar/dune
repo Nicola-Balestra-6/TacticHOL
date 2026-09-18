@@ -1,0 +1,15 @@
+(library
+ (name tactic_grammar)
+ (modules
+  tactic_ast
+  tactic_pp
+  tactic_parser
+  tactic_lexer
+  tactic_abstract)
+ (libraries menhirLib))
+
+(ocamllex
+ (modules tactic_lexer))
+
+(menhir
+ (modules tactic_parser))

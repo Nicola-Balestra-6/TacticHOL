@@ -1,0 +1,23 @@
+# Built by scripts/build_corpus.sh: the instrumented library, the recorded
+# steps, the chronological corpus and the policy snapshot (about 270 MB).
+# The artefacts of the reported runs, in data/search/ and
+# data/lemma_channel/, are kept.
+data/*
+!data/search/
+!data/lemma_channel/
+z_lib/
+
+# dune and OCaml build products
+_build/
+*.cmo
+*.cmi
+*.cmx
+*.cma
+*.o
+
+# Python caches, logs, editor backups
+__pycache__/
+*.log
+*.bak_*
+*.new_*
+*.bk

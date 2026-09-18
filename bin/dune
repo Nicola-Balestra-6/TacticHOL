@@ -1,0 +1,11 @@
+(executable
+ (name rewrite_prove)
+ (modules rewrite_prove)
+ (modes byte)
+ (libraries prove_rewrite))
+
+
+(executable
+ (name tactic_abstract_augment)
+ (modules tactic_abstract_augment)
+ (libraries tactic_grammar yojson))
