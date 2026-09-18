@@ -42,16 +42,20 @@ there.
 
 ## Requirements
 
-- HOL Light 3.1.0, built with `make` in its root directory, which
-  produces `pa_j.cmo` and `hol.sh`. The scripts run HOL Light through
-  `hol.sh` and use the opam switch of the HOL Light root, or the one
-  named by the environment variable `TT_OPAM_SWITCH`.
+- HOL Light at commit `157c99b7` of https://github.com/jrh13/hol-light
+  (release 3.1.0 plus the support for Camlp5 8.03.06; none of the files
+  that `hol.ml` loads differs from the release), built in its root
+  directory with `make switch-5`, `eval $(opam env)` and `make`, as its
+  README says. This creates a local opam switch with OCaml 5.2.0 and
+  Camlp5 8.03.06 and produces `pa_j.cmo` and `hol.sh`. The scripts run
+  HOL Light through `hol.sh` and use the opam switch of the HOL Light
+  root, or the one named by the environment variable `TT_OPAM_SWITCH`.
 - The recording sessions use the minimal HOL Light session of
   `hol_min/hol_min.ml`, which loads the kernel, `bool`, `drule` and
   `tactics` and nothing after them.
-- OCaml 5.2.0, Camlp5 8.03.06, dune, yojson, menhir, as on the
-  reference machine. `dune build` in this directory names anything
-  missing.
+- In that switch, `opam install dune yojson menhir` (reference
+  versions: dune 3.20.2, yojson 3.0.0, menhir 20250912). `dune build`
+  in this directory names anything missing.
 - Python 3, for the dataset scripts and the model call.
 
 ## 1. Build the corpus
