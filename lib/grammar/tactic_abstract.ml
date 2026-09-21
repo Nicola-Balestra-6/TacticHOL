@@ -98,8 +98,8 @@ let extract_thm_names_from_tokens (tokens : string list) : string list =
   - Identifier in [thm_names]: replace with THM_ARG.
 
   Inside (...) (depth > 0):
-  - All tokens are kept as-is. These are structural arguments (conversions,
-    tactical compositions) that should not be abstracted.
+  - Backtick tokens and identifiers are kept as-is. These are mostly
+    arguments of conversions or tactical compositions.
 
   Returns the abstracted token list and the list of extracted arguments.
 *)

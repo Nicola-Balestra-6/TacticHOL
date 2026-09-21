@@ -17,8 +17,8 @@
    the setting file of each run (repl/eval_search_*.ml), loaded after
    this one.
 
-   It ends by naming every function it has loaded, so that a partial
-   load fails here instead of looking like a working session. *)
+   It ends by naming values from the files it has loaded, so that a
+   partial load fails here instead of looking like a working session. *)
 
 #load "unix.cma";;
 

@@ -19,8 +19,8 @@
    (NOT_SUC, first with _0 and then with NUMERAL) would otherwise date
    a constant before its introduction.
 
-   Both writers refuse to overwrite. Load after repl/lemma_channel.ml,
-   which provides the index reader.
+   Both writers refuse to overwrite. Loaded by repl/lemma_channel.ml
+   after chrono_filter.ml, which provides the index reader.
    ================================================================== *)
 
 let wcr_root = Filename.dirname (Filename.dirname (!mcts_data_dir));;

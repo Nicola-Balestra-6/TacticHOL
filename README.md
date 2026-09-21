@@ -36,9 +36,11 @@ there.
     scripts/recording/      instrumentation and recording, one session per theory
     scripts/dataset/        chronological index, merge, export
     scripts/lemma_channel/  the model call, the join, and the channel's own README
-    repl/                   one file per run: load it in a fresh REPL, then start the run
+    repl/                   one file per run, plus the two loaders they use
     examples/               a proof built as a chain of calls to the prover
-    data/                   built by build_corpus.sh, not in the repository
+    data/search/            the artefacts of the reported search runs
+    data/lemma_channel/     the artefacts of the reported lemma-channel runs
+    .devcontainer/          a container with HOL Light already built (see Requirements)
 
 ## Requirements
 
@@ -128,10 +130,11 @@ composition.
 
 ## 3. Reproduce the evaluation
 
-Each file of `repl/` sets up one run: loaded in a fresh HOL Light
+Each of the files below sets up one run: loaded in a fresh HOL Light
 session launched from this directory, it loads what the run needs,
 sets its parameters, checks them, and prints the call that starts the
-run. It starts nothing itself.
+run. It starts nothing itself. The other two files of `repl/` are the
+loaders these six use, and are not runs themselves.
 
     repl/eval_search_30s.ml        search over the library, 30 s per theorem
     repl/eval_search_atp_30s.ml    the same, with the ATP channel

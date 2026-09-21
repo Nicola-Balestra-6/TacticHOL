@@ -1,3 +1,23 @@
+(* ========================================================================= *)
+(*                               HOL LIGHT                                   *)
+(*                                                                           *)
+(*              Modern OCaml version of the HOL theorem prover               *)
+(*                                                                           *)
+(*                            John Harrison                                  *)
+(*                                                                           *)
+(*            (c) Copyright, University of Cambridge 1998                    *)
+(*              (c) Copyright, John Harrison 1998-2007                       *)
+(* ========================================================================= *)
+
+(* Modified version of hol.ml, used for the minimal sessions in which the
+   library is recorded. Redistributed under the HOL Light licence, whose
+   notice, conditions and disclaimer are in LICENSE.hol-light beside this
+   file. Three changes with respect to hol.ml: the version string;
+   hol_min_lib.ml is loaded in place of hol_lib.ml, and from HOL_ML_PATH
+   because this file lives outside the HOL Light root; database.ml and the
+   HOLLIGHT_USE_MODULE branch are not loaded, the latter being set to 0 by
+   hol.sh in any case. *)
+
 let hol_version = "3.1.0-min";;
 
 #directory "+compiler-libs";;

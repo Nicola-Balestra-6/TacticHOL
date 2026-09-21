@@ -1,4 +1,21 @@
-(* Minimal HOL Light library loader: core + automation, without large theorem libraries *)
+(* ========================================================================= *)
+(*                               HOL LIGHT                                   *)
+(*                                                                           *)
+(*              Modern OCaml version of the HOL theorem prover               *)
+(*                                                                           *)
+(*                            John Harrison                                  *)
+(*                                                                           *)
+(*            (c) Copyright, University of Cambridge 1998                    *)
+(*              (c) Copyright, John Harrison 1998-2024                       *)
+(*              (c) Copyright, Juneyoung Lee 2024                            *)
+(* ========================================================================= *)
+
+(* Modified version of hol_lib.ml: a minimal HOL Light session, made of the
+   kernel, the parser and the printer, and everything up to tactics.ml.
+   What comes after, the automation included, is deliberately left out and
+   kept commented below. Redistributed under the HOL Light licence, whose
+   notice, conditions and disclaimer are in LICENSE.hol-light beside this
+   file. *)
 
 include Bignum;;
 open Hol_loader;;

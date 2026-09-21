@@ -95,7 +95,8 @@ let try_tactic (tac : tactic) (g : goal) : goal list option =
    Returns Some (subgoals) on success, None on eval failure / tactic
    failure / timeout.
 
-   This is the main entry point for proof search:
+   The search does not call it: it evaluates and applies in two steps
+   (eval_tactic, then try_tactic in a forked child). Example:
      try_eval_tactic "REWRITE_TAC[ADD_COMM]" goal *)
 let try_eval_tactic (tac_string : string) (g : goal) : goal list option =
   match eval_tactic tac_string with

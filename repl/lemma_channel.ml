@@ -17,8 +17,8 @@
    other run may share this REPL. It sets no run parameter: those
    belong to the setting file of each run, loaded after this one.
 
-   It ends by naming every function it has loaded, so that a partial
-   load fails here instead of looking like a working session. *)
+   It ends by naming values from the files it has loaded, so that a
+   partial load fails here instead of looking like a working session. *)
 
 #load "unix.cma";;
 
@@ -80,4 +80,4 @@ ignore
    rsg_run, rsg_selftest, asm_run, rk_run, rk_selftest)
 ;;
 Printf.printf "lemma_channel: ready, 39 names resolved\n%!";;
-Printf.printf "lemma_channel: the proposals are asked with scripts/lemma_channel/call_llm.py: by default Claude (claude-opus-5), which reads your Anthropic API key from the environment variable ANTHROPIC_API_KEY; any other model with your own key through an OpenAI-compatible endpoint (--provider openai-compatible --model ... --base-url ... --api-key-env ...); see scripts/lemma_channel/README.md\n%!";;
+Printf.printf "lemma_channel: the model call needs an API key in the environment; see scripts/lemma_channel/README.md\n%!";;

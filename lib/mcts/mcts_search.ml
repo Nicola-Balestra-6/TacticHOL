@@ -14,11 +14,12 @@
    - mcts_predict : goal -> (string * float) list
 
    Uses from tactic_exec.ml:
-   - try_eval_tactic : string -> goal -> goal list option
    - eval_tactic : string -> tactic option
+   - try_tactic : tactic -> goal -> goal list option
 
    Uses from HOL Light:
-   - top_realgoal, find_terms, is_var, dest_var *)
+   - aconv, concl, ASSUME, parse_term, string_of_term,
+     the_implicit_types *)
 
 
 (* ================================================================== *)
@@ -53,7 +54,7 @@ let msearch_is_atp_tac (tac_str : string) : bool =
    GoalNode's prediction list, using the same operational premise slate
    the policy computes (pol_premise_mode, mcts_thm_r = 16).
    Default false => mg_preds unchanged => behaviour-preserving.
-   Cost: one extra fork (msearch_tactic_timeout) per reached goal.
+   Cost: one extra fork (msearch_atp_tactic_timeout) per reached goal.
    ASM_MESON solves-or-fails, so a failed call adds no sub-goals: the
    channel never pollutes the search tree, it only spends fork time. *)
 let msearch_atp_channel = ref false;;
@@ -125,7 +126,7 @@ let msearch_initial_tac_result_reward (subgoals : goal list) : float =
    With knn, sub-goals similar to previously proved goals get
    higher Q, so the search spends more time on promising sub-trees.
    Sub-goals with no k-NN match get Q = floor (default 0.0),
-   making this strictly non-peggiorative vs const0. *)
+   so it can only do better than const0, never worse. *)
 let msearch_value_mode = ref "const0";;
 
 (* Floor value: V(goal) never drops below this.
@@ -638,7 +639,9 @@ let msearch_goal_eq (g1 : goal) (g2 : goal) : bool =
    Checks for each sub-goal:
    1. Sub-goal identical to the current goal (direct loop).
    2. Sub-goal identical to an ancestor goal (vertical loop).
-   3. Sub-goal has conclusion = F (unprovable). *)
+   3. Sub-goal with conclusion F, cut by choice. Such a goal is
+      ordinary in HOL Light, where negation is p ==> F, so this
+      check also drops branches whose assumptions are contradictory. *)
 let msearch_check_productivity
     (current_goal : goal) (ancestor_ids : int list) (subgoals : goal list)
   : int =
@@ -1040,9 +1043,9 @@ let msearch_print_expand_result (r : msearch_expand_result) : unit =
 
 (* Decide whether to expand or descend at a GoalNode.
 
-   Uses PUCT with shift policy: undecided children are ranked 
+   Uses PUCT with shift policy: undecided children are ranked
    0, 1, 2, ... in order, skipping decided children.
-   The prior policy is recalculated from this rank, not from the 
+   The prior policy is recalculated from this rank, not from the
    stored mtr_pol.
 
    Compares the best existing child's PUCT value against the "fresh
@@ -1336,8 +1339,8 @@ let msearch_print_candidates (id : int) (n : int) : unit =
    Returns (proof_string, leaf_count) where:
    - proof_string is the composed tactic (THEN / THENL)
    - leaf_count is the number of atomic tactic applications
-     in the proof path (comparable to step count in the JSONL 
-     dataset, where THEN/THENL are unfolded into individual 
+     in the proof path (comparable to step count in the JSONL
+     dataset, where THEN/THENL are unfolded into individual
      steps) *)
 let rec msearch_extract_proof (goal_id : int) : (string * int) =
   let gnode = msearch_get_goal goal_id in
@@ -1414,7 +1417,7 @@ let msearch_loop (verbose : bool) : msearch_result =
   let steps = ref 0 in
   let keep_going = ref true in
 
-  while !(keep_going) do 
+  while !(keep_going) do
     let root = msearch_get_goal !(msearch_root_id) in
 
     (* Check termination conditions *)
@@ -1505,118 +1508,3 @@ let msearch_prove (g : goal) (verbose : bool) : msearch_result =
   msearch_print_result result;
   result
 ;;
-
-
-
-
-(* ================================================================== *)
-(* Test block without loop                                            *)
-(* ================================================================== *)
-
-(* Before msearch_prove: 
-   - msearch_use_const0 ();;
-   OR
-   - msearch_use_subgoal_count ();;
-
-
-
-   Usage in HOL Light session after loading:
-
-   mcts_init ();;
-
-   (* --- Sub-step 3a: root creation --- *)
-   g `!n. n + 0 = n`;;
-   let root_id = msearch_create_root (top_realgoal ());;
-   msearch_print_goal root_id;;
-   msearch_print_candidates root_id 5;;
-
-   (* --- Sub-step 3b: expand --- *)
-   let r1 = msearch_expand root_id;;
-   (match r1 with Some r -> msearch_print_expand_result r | None -> ());;
-   msearch_print_goal root_id;;
-
-   (* --- Sub-step 3c: step (select + expand + backpropagate) --- *)
-   (* Reset and test the full step cycle *)
-   g `!n. n + 0 = n`;;
-   let root_id = msearch_create_root (top_realgoal ());;
-
-   (* Step 1: should expand root with first tactic *)
-   let s1 = msearch_step ();;
-   (match s1 with Some r -> msearch_print_expand_result r | None -> ());;
-   msearch_print_goal root_id;;
-
-   (* Step 2: should either expand root with second tactic,
-      or descend into first child and expand there *)
-   let s2 = msearch_step ();;
-   (match s2 with Some r -> msearch_print_expand_result r | None -> ());;
-   msearch_print_goal root_id;;
-
-   (* Run a few more steps *)
-   let s3 = msearch_step ();;
-   (match s3 with Some r -> msearch_print_expand_result r | None -> ());;
-   let s4 = msearch_step ();;
-   (match s4 with Some r -> msearch_print_expand_result r | None -> ());;
-   msearch_print_goal root_id;;
-
-   (* Check if root is proved *)
-   let root = msearch_get_goal root_id;;
-   Printf.printf "Root status: %s\n" (msearch_status_string root.mg_status);;
-
-   Printf.printf "nodes=%d tac_apps=%d cache_hits=%d\n"
-     !msearch_nodes_created !msearch_tac_applications !msearch_cache_hits;;
-*)
-
-
-(* ================================================================== *)
-(* Test block with loop                                               *)
-(* ================================================================== *)
-
-(* Usage in HOL Light session after loading:
-
-   mcts_init ();;
-
-   (* --- Sub-step 3d: full proof search --- *)
-
-   (* Test 1: simple goal, verbose *)
-   g `!n. n + 0 = n`;;
-   let r1 = msearch_prove (top_realgoal ()) true;;
-
-   (* Test 2: simple goal, quiet *)
-   g `!n. n + 0 = n`;;
-   let r2 = msearch_prove (top_realgoal ()) false;;
-
-   (* Test 3: trivial goal *)
-   g `T`;;
-   let r3 = msearch_prove (top_realgoal ()) false;;
-
-   (* Test 4: two-step goal *)
-   g `!x. x = x`;;
-   let r4 = msearch_prove (top_realgoal ()) true;;
-
-   (* Test 5: harder goal (may require more steps) *)
-   g `!m n. m + n = n + m`;;
-   let r5 = msearch_prove (top_realgoal ()) true;;
-
-
-   ---- More difficult goals ---
-   (* Goal a 3+ passi: induzione con step non banale *)
-   g `!n. 0 + n = n`;;
-   let r6 = msearch_prove (top_realgoal ()) true;;
-
-  (* Goal che richiede MESON_TAC *)
-  g `!x y z. (x = y) /\ (y = z) ==> (x = z)`;;
-  let r7 = msearch_prove (top_realgoal ()) true;;
-
-  (* Test per tattica usata *)
-  g `!n. n < n + 1`;;
-  let r8 = msearch_prove (top_realgoal ()) true;;
-
-  (* Goal falso: dovrebbe saturare *)
-  g `F`;;
-  let r9 = msearch_prove (top_realgoal ()) false;;
-
-  (* Goal che richiede più tattiche strutturali
-     Risolvibile con MESON_TAC *)
-  g `!p q. p /\ q ==> q /\ p`;;
-  let r10 = msearch_prove (top_realgoal ()) true;;
-*)

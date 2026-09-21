@@ -1,4 +1,4 @@
-(* lib/ocaml_prove_rewrite.ml *)
+(* lib/rewrite/ocaml_prove_rewrite.ml *)
 
 open Tactic_grammar
 
@@ -326,7 +326,7 @@ let rec collect_str_item_edits ~(file_text : string) (struc_item : MLast.str_ite
             acc)
         acc
         list_of_pattern_expr_attrs
-  
+
   | MLast.StMod (_loc, _rf, Ploc.VaVal mod_bindings) ->
       List.fold_left
         (fun acc (_name_opt, me, _attrs) ->
@@ -412,9 +412,6 @@ let load_pa_j_or_fail ~(src : string) : unit =
 (* ------------------------------------------------------------------
    Rewrite_file function
    ------------------------------------------------------------------ *)
-
-(* Pcaml.input_fine & Pcaml.parse_implem in home/vscode/hol-light/_opam/lib/camlp5/pcaml.mli 
-   value parse_implem : (Stream.t char -> (list (MLast.str_item * MLast.loc) * status)) *)
 
 (* Rewrite an OCaml source file by instrumenting supported prove tactics,
    then write the rewritten result to [dst]. *)

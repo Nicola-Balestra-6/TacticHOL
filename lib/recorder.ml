@@ -414,16 +414,9 @@ let append_jsonl_line (line : string) : unit =
 ;;
 
 (* ---------- Proof wrapper ---------- *)
-(*
-(* Wrap [prove] so that nested proofs get their own recording context. *)
-let recording_prove ~(proof_name : string) ((tm, tac) : term * tactic) : thm =
-  begin_recording_proof ~proof_name;
-  Fun.protect
-    ~finally:end_recording_proof
-    (fun () -> prove (tm, tac))
-;;
-*)
 
+(* Wrap [prove] so that nested proofs get their own recording context,
+   and register the theorem once proved. *)
 let recording_prove ~(proof_name : string) ((tm, tac) : term * tactic) : thm =
   begin_recording_proof ~proof_name;
   Fun.protect
@@ -523,8 +516,8 @@ let save_tac (name : string) (tac : tactic) : tactic =
    with no new featurization logic.
 
    Theorems that raise exceptions during printing or featurization are
-   silently skipped — this handles pathological terms that cannot be
-   round-tripped through string_of_term.
+   silently skipped: a term that string_of_term cannot print gets no
+   row, and nothing counts them.
 
    The output path identifies the source theory by convention
    (e.g. data/thm_index/z_arith_thms.jsonl), so no theory field is stored

@@ -809,10 +809,7 @@ let pol_premise_select_goalbased (query_feats : string list) (r : int)
    that arm. The union of the two lists is scored; ties broken by score
    desc, then name asc (deterministic). Rank-based fusion is scale-free:
    the raw scores of the two arms (IDF-overlap mass vs sim/sqrt(count))
-   are incomparable and are never mixed directly. Returns top-r names.
-   Mirrors pv_rrf_fuse in diagnose_premise_hybrid.ml (the screened
-   implementation); kept in sync by hand — the policy file cannot
-   depend on the diagnostics file (reverse #use order). *)
+   are incomparable and are never mixed directly. Returns top-r names. *)
 let pol_premise_fuse_rankings
     (list_a : string list) (list_b : string list) (r : int)
   : string list =
@@ -1086,22 +1083,18 @@ let mcts_predict (g : goal) : (string * float) list =
   if candidates <> [] then candidates
   else begin
     (* Fallback: when k-NN returns zero candidates (cold start),
-       inject default tactic templates with scores proportional
-       to their frequency in the training dataset.
-       Templates with THM_ARG are instantiated via premise selection. *)
+       inject six fixed default templates. Their scores are constants
+       of this file and serve only to order them: the search takes its
+       prior from the rank, not from the score. Templates with THM_ARG
+       are instantiated via premise selection. *)
     let top_thms = pol_premise_select_configured query_feats !(mcts_thm_r) in
-    (* Default templates with scores proportional to their frequency
-       in the training dataset (policy_samples_chrono.tsv).
-       Frequency counts measured on the full 13862-sample dataset.
-       Risolutori autonomi: SET_TAC, REAL_ARITH_TAC, ARITH_TAC.
-       Template con premise selection: REWRITE_TAC, MESON_TAC, SIMP_TAC. *)
     let defaults = [
-      ("REWRITE_TAC[THM_ARG]", 2409.0);   (* freq: 2409 *)
-      ("MESON_TAC[THM_ARG]",    487.0);   (* freq:  487 *)
-      ("SIMP_TAC[THM_ARG]",     320.0);   (* freq:  320 *)
-      ("SET_TAC[]",             234.0);   (* freq:  234 *)
-      ("REAL_ARITH_TAC",        201.0);   (* freq:  201 *)
-      ("ARITH_TAC",              37.0);   (* freq:   37 *)
+      ("REWRITE_TAC[THM_ARG]", 2409.0);
+      ("MESON_TAC[THM_ARG]",    487.0);
+      ("SIMP_TAC[THM_ARG]",     320.0);
+      ("SET_TAC[]",             234.0);
+      ("REAL_ARITH_TAC",        201.0);
+      ("ARITH_TAC",              37.0);
     ] in
     let goal_vars = pol_goal_var_strings g !(mcts_term_r) in
     List.fold_left (fun acc (template, score) ->
@@ -1139,7 +1132,7 @@ let mcts_init () : unit =
   Printf.printf "  %d samples (pos %d..%d)\n%!" !(pol_n_train)
     (!(pol_train_positions)).(0)
     (!(pol_train_positions)).(!(pol_n_train) - 1);
-  
+
   (* Goal-based premise votes (goal-based and hybrid modes both need them). *)
   if !(pol_premise_mode) <> "idf" then begin
     Printf.printf "  Loading premise votes (goal-based scorer)...\n%!";
@@ -1157,7 +1150,7 @@ let mcts_init () : unit =
   Printf.printf "  %d theorems (pos %d..%d)\n%!" !(pol_n_thms)
     (!(pol_thm_positions)).(0)
     (!(pol_thm_positions)).(!(pol_n_thms) - 1);
-  
+
   (* Premise pool (membership filter; goal-based and hybrid modes). *)
   if !(pol_premise_mode) <> "idf" then
     pol_build_prem_pool ();

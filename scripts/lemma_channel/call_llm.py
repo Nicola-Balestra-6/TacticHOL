@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Asks the model for k candidate lemmas for every goal.
 
-Reads   goal_texts.tsv         (the goals, exported live from HOL Light)
+Reads   goal_texts_annotated.tsv  (from goal_text_annotate.ml: the goals
+                                   with the types of their variables in
+                                   the text)
 Writes  candidate_terms.tsv    -> the typing gate (llm_gate_run.ml)
         raw/<pos>_<name>.json  -> request and response in full
         raw_incomplete/        -> responses that ended without a stop
@@ -293,7 +295,8 @@ def response_is_complete(resp):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--goals",  default="data/lemma_channel/goal_texts.tsv")
+    ap.add_argument("--goals",
+                default="data/lemma_channel/goal_texts_annotated.tsv")
     ap.add_argument("--out",    default="data/lemma_channel/candidate_terms.tsv")
     ap.add_argument("--rawdir", default="data/lemma_channel/raw")
     ap.add_argument("--rawdir-incomplete", dest="rawdir_inc", default=None,

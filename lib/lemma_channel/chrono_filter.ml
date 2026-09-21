@@ -8,7 +8,8 @@
    Three channels, counted separately, in unit ROWS:
      a constant introduced after the goal   chf_constant_anachronism,
                                             chf_candidate_anachronism
-     a free variable absent from the goal   chf_free_vars_not_in_goal
+     a free variable not in the goal,       chf_free_vars_not_in_goal
+       bound or free
      a later theorem                        aconv (copy), or term_match
                                             from the theorem to the
                                             candidate (instance)
@@ -77,8 +78,8 @@ let chf_map_file = ref
 let chf_registry_file = ref
   (chf_root ^ "/data/lemma_channel/const_registry_order.tsv");;
 
-let chf_expected_rows     = ref 480;;
-let chf_expected_valid    = ref 474;;
+let chf_expected_rows     = ref 13279;;
+let chf_expected_valid    = ref 13079;;
 let chf_expected_map      = ref 288;;
 let chf_expected_registry = ref 303;;
 
@@ -575,25 +576,25 @@ let chf_run () : unit =
   let n_three_channels = comb.(7) in
   Printf.printf "\nchf_run - chronological filter\n";
   Printf.printf "\n  rows\n";
-  Printf.printf "    total                                      %d\n" (List.length res);
-  Printf.printf "    not valid, passed through                  %d\n" (!n_nv);
-  Printf.printf "    kept                                       %d\n" (!n_kept);
-  Printf.printf "    rejected                                   %d\n" (!n_rej);
-  Printf.printf "      by a constant introduced after the goal  %d\n" (!n_rej_const);
-  Printf.printf "      by a free variable absent from the goal  %d\n" (!n_rej_alien);
-  Printf.printf "      by a later theorem, copy                 %d\n" (!n_rej_copy);
-  Printf.printf "      by a later theorem, instance             %d\n" (!n_rej_instance);
-  Printf.printf "      rows in two of the channels above        %d   (counted twice above)\n" n_two_channels;
-  Printf.printf "      rows in all three channels               %d   (counted three times above)\n" n_three_channels;
-  Printf.printf "    undated constant, not rejected             %d\n" (!n_und);
+  Printf.printf "    total                                                %d\n" (List.length res);
+  Printf.printf "    not valid, passed through                            %d\n" (!n_nv);
+  Printf.printf "    kept                                                 %d\n" (!n_kept);
+  Printf.printf "    rejected                                             %d\n" (!n_rej);
+  Printf.printf "      by a constant introduced after the goal            %d\n" (!n_rej_const);
+  Printf.printf "      by a free variable not in the goal, bound or free  %d\n" (!n_rej_alien);
+  Printf.printf "      by a later theorem, copy                           %d\n" (!n_rej_copy);
+  Printf.printf "      by a later theorem, instance                       %d\n" (!n_rej_instance);
+  Printf.printf "      rows in two of the channels above                  %d   (counted twice above)\n" n_two_channels;
+  Printf.printf "      rows in all three channels                         %d   (counted three times above)\n" n_three_channels;
+  Printf.printf "    undated constant, not rejected                       %d\n" (!n_und);
   Printf.printf "\n  positions\n";
-  Printf.printf "    goals in the input                         %d\n" (List.length pos_all);
-  Printf.printf "    goals with no valid candidate left         %d\n"
+  Printf.printf "    goals in the input                                   %d\n" (List.length pos_all);
+  Printf.printf "    goals with no valid candidate left                   %d\n"
     (List.length pos_all - List.length pos_kept);
   Printf.printf "\n  theorems\n";
-  Printf.printf "    distinct theorems that caused a rejection  %d\n"
+  Printf.printf "    distinct theorems that caused a rejection            %d\n"
     (List.length thm_hits);
-  Printf.printf "\n  comparisons (row, theorem) performed         %d   (a rejected row stops at its first match)\n"
+  Printf.printf "\n  comparisons (row, theorem) performed                   %d   (a rejected row stops at its first match)\n"
     (!n_pairs);
   Printf.printf "\n  wall-clock %.1f s\n" dt;
   Printf.printf "  measure       %s\n" (!chf_measure);
@@ -668,7 +669,7 @@ let chf_selftest () : unit =
       (chf_row_verdict "ANACHRONISTIC" [] None = "REJECTED");
   chk "verdict: UNDATED -> KEPT"
       (chf_row_verdict "UNDATED" [] None = "KEPT");
-  chk "verdict: free variable absent from the goal -> REJECTED"
+  chk "verdict: free variable not in the goal, bound or free -> REJECTED"
       (chf_row_verdict "DATED" ["zz"] None = "REJECTED");
   chk "verdict: later theorem -> REJECTED"
       (chf_row_verdict "DATED" [] (Some (200, "T", "COPY")) = "REJECTED");
@@ -698,8 +699,8 @@ let chf_selftest () : unit =
       (chf_class_const rk (Some 5) 5 "b" None = "UNDATED");
 
   let f_reg = "/tmp/chf_selftest_reg_ok.tsv" in
-  let f_buc = "/tmp/chf_selftest_reg_buco.tsv" in
-  let f_anc = "/tmp/chf_selftest_reg_ancora.tsv" in
+  let f_buc = "/tmp/chf_selftest_reg_gap.tsv" in
+  let f_anc = "/tmp/chf_selftest_reg_rank0.tsv" in
   wr f_reg ["rank\tconst_name"; "0\t="; "1\tT"; "2\t/\\"];
   wr f_buc ["rank\tconst_name"; "0\t="; "2\tT"; "3\t/\\"];
   wr f_anc ["rank\tconst_name"; "0\tT"; "1\t="; "2\t/\\"];
@@ -714,7 +715,7 @@ let chf_selftest () : unit =
 
   let hdr5 = "position\tname\trank\tcategory\tterm" in
   let f_ok  = "/tmp/chf_selftest_in_ok.tsv" in
-  let f_six = "/tmp/chf_selftest_in_seicampi.tsv" in
+  let f_six = "/tmp/chf_selftest_in_six_fields.tsv" in
   wr f_ok  [hdr5; "5\tIMP_DEF\t0\tvalid\tT"; "5\tIMP_DEF\t1\tparse_fail\tU"];
   wr f_six [hdr5; "5\tIMP_DEF\t0\tvalid\tT\tEXTRA"; "5\tIMP_DEF\t1\tparse_fail\tU"];
   chk "sound input, right expectations -> does not stop"
@@ -727,10 +728,10 @@ let chf_selftest () : unit =
       (raises (fun () -> ignore (chf_read_input f_six 2 1)));
 
   let s_m = !chf_measure and s_s = !chf_search_input in
-  let e_m = "/tmp/chf_selftest_misura_esistente.tsv" in
-  let n_s = "/tmp/chf_selftest_ricerca_nuovo.tsv" in
-  let n_m = "/tmp/chf_selftest_misura_nuovo.tsv" in
-  let e_s = "/tmp/chf_selftest_ricerca_esistente.tsv" in
+  let e_m = "/tmp/chf_selftest_measure_existing.tsv" in
+  let n_s = "/tmp/chf_selftest_search_new.tsv" in
+  let n_m = "/tmp/chf_selftest_measure_new.tsv" in
+  let e_s = "/tmp/chf_selftest_search_existing.tsv" in
   wr e_m ["already here"]; rm n_s;
   chf_measure := e_m; chf_search_input := n_s;
   chk "measure already existing -> stops" (raises chf_run);

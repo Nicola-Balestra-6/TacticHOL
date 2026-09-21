@@ -5,7 +5,7 @@
    A goal statement is given to the model as text, with the types of
    its variables written in it. HOL Light's printer does not guarantee
    that a printed term reads back as the same term, so the text is
-   chosen among up to five printings, taking the first that reads back
+   chosen among up to six printings, taking the first that reads back
    (aconv) as the goal:
      1. variables annotated with their types;
      2. every subterm annotated;
@@ -13,10 +13,10 @@
         is shared with a variable of another type, and the type
         variables; the renaming is checked to be conservative, and a
         goal on which the check fails is not transformed;
-     5. the same, printing the name of a constant instead of an
+     5, 6. the same two, printing the name of a constant instead of an
         overloaded interface symbol whose meaning the text would leave
         ambiguous.
-   A goal for which none of the five reads back is excluded from the
+   A goal for which none of the six reads back is excluded from the
    output and listed in a file of its own.
 
    gta_run rewrites the goal_text column of the input, keeps the other
@@ -177,8 +177,8 @@ let gta_transform t =
       else (gta_guard_tyvar := (!gta_guard_tyvar) + 1; None);;
 
 (* ---------------------------------------------------------------- *)
-(* The fifth printing: the name of the constant instead of the       *)
-(* symbol.                                                           *)
+(* The fifth and sixth printings: the name of the constant instead   *)
+(* of the symbol.                                                    *)
 (* ---------------------------------------------------------------- *)
 
 (* An interface symbol is ambiguous when it is shared by more than one

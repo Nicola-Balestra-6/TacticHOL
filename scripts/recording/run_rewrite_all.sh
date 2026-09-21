@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Rewrite the listed HOL Light theories into z_lib/, every tactic wrapped
+# in a recording function: z_lib/z_<theory>.ml, one file per theory.
+# Requires: the dune executables of bin/, built here by dune build.
+
 # Bash strict mode:
 # -e: exit on error
 # -u: error on unset variables
@@ -51,7 +55,6 @@ THEORIES=(
 
 dune build
 
-# Rewrite all the .ml files in HOL Light lib, saving the rewritten versions in z_lib/
 for f in "${THEORIES[@]}"; do
   echo "$f.ml -> z_lib/z_$f.ml"
   dune exec ./bin/rewrite_prove.exe -- \
@@ -60,5 +63,3 @@ for f in "${THEORIES[@]}"; do
 done
 
 echo "Done."
-
-# One file by hand: dune exec ./bin/rewrite_prove.exe -- <hol-light>/sets.ml z_lib/z_sets.ml

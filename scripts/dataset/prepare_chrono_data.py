@@ -19,7 +19,7 @@ Usage:
     --output-dir data/chrono
 
   # Step 2 (external): run tactic_abstract_augment on the merged file
-  #   dune exec -- tactic_abstract_augment \\
+  #   dune exec ./bin/tactic_abstract_augment.exe -- \\
   #     data/chrono/all_recorded.jsonl \\
   #     data/chrono/all_recorded_augmented.jsonl \\
   #     --thm-index data/thm_index/theorem_index_chrono.jsonl
@@ -185,9 +185,8 @@ def do_merge(args):
 def build_name_to_position(chrono_index):
     """Build thm_name -> position mapping from the chronological index.
 
-    Extracted verbatim from do_export (behavior-preserving) so the premise
-    export reuses identical name resolution. Adds a short-name alias for
-    dotted names (e.g. 'theory.NAME' -> 'NAME') when not already present.
+    Adds a short-name alias for dotted names (e.g. 'theory.NAME' -> 'NAME')
+    when not already present.
     """
     name_to_position = {}
     for entry in chrono_index:
@@ -202,10 +201,8 @@ def build_name_to_position(chrono_index):
 def assign_positions(samples, name_to_position):
     """Assign chronological position to each sample, in place.
 
-    Extracted verbatim from do_export (behavior-preserving) so the same
-    logic can be reused by the premise-export script, guaranteeing identical
-    ordering. theorem_id format: "theory:thm_name". Sets row["position"] = -1
-    when no match is found. Returns (no_match_count, no_match_examples).
+    theorem_id format: "theory:thm_name". Sets row["position"] = -1 when no
+    match is found. Returns (no_match_count, no_match_examples).
     """
     no_match_count = 0
     no_match_examples = []
@@ -436,7 +433,7 @@ def main():
     parser.add_argument("--keep-all-tac", action="store_true",
                         help="merge mode: keep the rows should_drop_tac would "
                              "drop (SUBGOAL_THEN, fun ... ->). "
-                             "Default: drop them, as before.")
+                             "Default: drop them.")
 
     args = parser.parse_args()
 

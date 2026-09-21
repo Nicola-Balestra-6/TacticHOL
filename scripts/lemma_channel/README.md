@@ -47,8 +47,9 @@ record which one did.
         -d '{"model":"claude-opus-5","max_tokens":16,"messages":[{"role":"user","content":"ping"}]}'
 
   A JSON answer with text means the key, the credit and the network are
-  in order; `401` is a wrong key, `402` missing credit, `404` a model
-  the account cannot use.
+  in order. An error is not self-explanatory: the status line alone does
+  not separate a wrong key from missing credit from a malformed request,
+  so read the body of the answer, which names the cause.
 
 ## The chain
 
@@ -56,15 +57,22 @@ Every OCaml stage runs in a fresh HOL Light REPL launched from the
 repository root, after `#use "repl/lemma_channel.ml";;`, which loads the
 prover, the evaluation runner and the files of `lib/lemma_channel/`.
 Python stages run from the repository root. Each stage refuses to
-overwrite an existing output.
+overwrite an existing output. The artefacts of the reported runs are in
+`data/lemma_channel/`, one per stage, so the chain can be entered at any
+stage instead of run from the start.
 
-1. **Goals.** The theorems the search left unproved are exported with
-   their statement (`lib/lemma_channel/llm_goal_export.ml`), and the
-   statement is annotated with the types of its variables
+1. **Goals.** The input is `goals.tsv`, the list of the theorems a
+   search run left unproved, as `position TAB name`: the rows of that
+   run's output `data/search/eval_search_atp_60s.tsv` whose status is
+   not `PROVED`.
+   The statements are exported
+   (`lib/lemma_channel/llm_goal_export.ml`), and each is annotated with
+   the types of its variables
    (`lib/lemma_channel/goal_text_annotate.ml`), so that the model sees
    the types in the text. Goals whose annotated text does not read back
    as the same term are excluded and counted.
-   Output: `goal_texts_annotated.tsv` (position, name, n_free, goal_text).
+   Output: `goal_texts_annotated.tsv` (position, name, n_free, goal_text),
+   and the goals left out in `goal_texts_excluded.tsv`.
 
 2. **Proposals.** `scripts/lemma_channel/call_llm.py` asks the model
    for k lemmas per goal, with the prompt fixed in `build_prompt`. The
@@ -98,8 +106,9 @@ overwrite an existing output.
 
 5. **Chronological filter.** `lib/lemma_channel/chrono_filter.ml`
    (`chf_run`) rejects a proposal that uses a constant introduced after
-   the goal, a free variable absent from the goal, or a theorem that
-   comes later in the library (as a copy or an instance). It needs two
+   the goal, a free variable that does not occur in the goal, bound or
+   free, or a theorem that comes later in the library (as a copy or an
+   instance). It needs two
    files on the constants of HOL Light: the first position at which each
    constant occurs in the theorem index, and the order of introduction
    of all constants (`lib/lemma_channel/write_constant_registry.ml`).

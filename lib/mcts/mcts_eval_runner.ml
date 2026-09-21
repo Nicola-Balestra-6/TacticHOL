@@ -313,8 +313,8 @@ let run_mcts_eval () : unit =
             incr timed_out;
           total_cache_hits := !(total_cache_hits) + result.msr_cache_hits;
 
-          (* Gc.compact every 25 searched theorems to reclaim heap.
-             With 12GB Docker this keeps peak usage well within limits.*)
+          (* Gc.compact every 10 searched theorems to reclaim heap,
+             Gc.minor after the others. *)
           if !(searched) mod 10 = 0 then
             Gc.compact ()
           else

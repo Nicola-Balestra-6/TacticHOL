@@ -1,3 +1,3 @@
-(lang dune 3.10) 
-(name recording_lexer) 
+(lang dune 3.10)
+(name tactichol)
 (using menhir 2.1)

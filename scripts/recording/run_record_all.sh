@@ -10,7 +10,6 @@
 # -o pipefail: pipeline fails if any command fails
 set -euo pipefail
 
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 HOL_ROOT="$(cd "$ROOT_DIR/.." && pwd)"
@@ -57,7 +56,7 @@ THEORIES=(
 for f in "${THEORIES[@]}"; do
   echo "z_$f.ml -> data/recorded/z_$f.jsonl"
   echo "[run_record_all] Starting fresh HOL session for z_$f.ml"
-  
+
   # A minimal HOL Light session, fed the OCaml commands on standard input.
   # LINE_EDITOR=env: without ledit in front of the toplevel, the exit status
   # of hol.sh is that of the session, and a session that dies stops the script.

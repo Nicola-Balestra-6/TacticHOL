@@ -245,7 +245,7 @@ let rk_fork_replay (body : string) (target : term) : int =
       ignore (Unix.write pipe_w buf 0 1);
       Unix.close pipe_w;
       (* Self-SIGKILL: do not run at_exit, do not flush the parent's
-         inherited channels.  Same as msearch_try_tactic_forked:487. *)
+         inherited channels.  Same as msearch_try_tactic_forked. *)
       Unix.kill (Unix.getpid ()) 9;
       exit 1
     end else begin
