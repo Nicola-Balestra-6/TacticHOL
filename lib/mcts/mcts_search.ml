@@ -337,7 +337,7 @@ let msearch_prior_policy (rank : int) : float =
 
 
 (* ================================================================== *)
-(* Goal content key for cache                                        *)
+(* Goal content key for cache                                         *)
 (* ================================================================== *)
 
 (* Cache key of a goal: the conclusion and the assumptions printed with
@@ -429,7 +429,7 @@ let msearch_read_fork_goals (path : string) : goal list option =
 ;;
 
 (* ================================================================== *)
-(* Type environment for the lemmas proposed by the model             *)
+(* Type environment for the lemmas proposed by the model              *)
 (* ================================================================== *)
 
 (* The search executes TEXT: a term between backquotes is built by
@@ -566,7 +566,7 @@ let msearch_try_tactic_forked (timeout : float) (tac_str : string) (g : goal)
 
 
 (* ================================================================== *)
-(* Tactic application with cache                                     *)
+(* Tactic application with cache                                      *)
 (* ================================================================== *)
 
 (* Apply a tactic string to a goal, using the tactic cache.
@@ -1217,7 +1217,7 @@ let msearch_backpropagate
 
 
 (* ================================================================== *)
-(* MCTS step: select -> expand -> backpropagate                        *)
+(* MCTS step: select -> expand -> backpropagate                       *)
 (* ================================================================== *)
 
 (* Perform one MCTS step.

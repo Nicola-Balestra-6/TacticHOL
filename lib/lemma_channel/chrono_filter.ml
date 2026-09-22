@@ -84,7 +84,7 @@ let chf_expected_map      = ref 288;;
 let chf_expected_registry = ref 303;;
 
 (* ------------------------------------------------------------------ *)
-(* Reading and dating.                                                  *)
+(* Reading and dating.                                                *)
 (* ------------------------------------------------------------------ *)
 
 (* The chronological index of the theorems: position TAB name TAB ...,
@@ -180,7 +180,7 @@ let chf_read_theorem_index () : (int * string) list =
 ;;
 
 (* ------------------------------------------------------------------ *)
-(* Pure functions: none of them opens a file.                           *)
+(* Pure functions: none of them opens a file.                         *)
 (* ------------------------------------------------------------------ *)
 
 (* The names of the constants of the term. *)
@@ -267,7 +267,7 @@ let chf_row_verdict (const_class : string) (alien : string list)
 ;;
 
 (* ------------------------------------------------------------------ *)
-(* Readers. They assert and never write.                                *)
+(* Readers. They assert and never write.                              *)
 (* ------------------------------------------------------------------ *)
 
 let chf_read_map (path : string) (exp : int) : (string * int) list =
@@ -383,7 +383,7 @@ let chf_build_index () : (int * string * string list * term) list =
 ;;
 
 (* ------------------------------------------------------------------ *)
-(* The output row.                                                      *)
+(* The output row.                                                    *)
 (* ------------------------------------------------------------------ *)
 
 type chf_out = {
@@ -602,12 +602,12 @@ let chf_run () : unit =
   )
 ;;
 
-(* ------------------------------------------------------------------ *)
+(* ------------------------------------------------------------------- *)
 (* Selftest. Pairs at one difference: every case that must trigger a   *)
 (* channel sits next to the one that must leave it quiet. The "must    *)
 (* stop" cells do not read the exception: each is paired with a check  *)
-(* that nothing was written.                                            *)
-(* ------------------------------------------------------------------ *)
+(* that nothing was written.                                           *)
+(* ------------------------------------------------------------------- *)
 
 let chf_selftest () : unit =
   let ok = ref 0 and ko = ref 0 in

@@ -25,12 +25,12 @@
    typed_parse.ml, llm_leaf_run.ml and chrono_filter.ml. Fresh REPL.
    ================================================================== *)
 
-(* ---------------------------------------------------------------- *)
+(* ----------------------------------------------------------------- *)
 (* The two printings. Failure causes are disjoint:                   *)
 (*   variables only   breaks on polymorphic constants;               *)
 (*   every subterm    breaks on overloaded symbols.                  *)
 (* Both save and restore print_types_of_subterms, also on exception. *)
-(* ---------------------------------------------------------------- *)
+(* ----------------------------------------------------------------- *)
 
 let rec annotate_vars tm =
   if is_var tm then
@@ -67,10 +67,10 @@ let annotated_no_box_limit t =
    with e -> (print_types_of_subterms := old; raise e));
   print_types_of_subterms := old; Buffer.contents buf;;
 
-(* ---------------------------------------------------------------- *)
+(* ----------------------------------------------------------------- *)
 (* The transformation behind printings 3 and 4: two steps, two       *)
 (* guards.                                                           *)
-(* ---------------------------------------------------------------- *)
+(* ----------------------------------------------------------------- *)
 
 (* Every variable of the term, free and bound, as distinct (name, type)
    pairs: a name that occurs twice in the list of names carries two
@@ -176,10 +176,10 @@ let gta_transform t =
       if back = tr then Some tr2
       else (gta_guard_tyvar := (!gta_guard_tyvar) + 1; None);;
 
-(* ---------------------------------------------------------------- *)
+(* ----------------------------------------------------------------- *)
 (* The fifth and sixth printings: the name of the constant instead   *)
 (* of the symbol.                                                    *)
-(* ---------------------------------------------------------------- *)
+(* ----------------------------------------------------------------- *)
 
 (* An interface symbol is ambiguous when it is shared by more than one
    constant in the_interface. Read from the table, not listed. *)
@@ -228,10 +228,10 @@ let gta_name_attempt tt =
             Some s6 when reads s6 -> ("NAME_FULL", s6, tt)
           | _ -> ("NONE", "", tt)));;
 
-(* ---------------------------------------------------------------- *)
+(* ----------------------------------------------------------------- *)
 (* The chain. Returns (mode, text, term the text was compared with); *)
 (* mode NONE means no printing reads back.                           *)
-(* ---------------------------------------------------------------- *)
+(* ----------------------------------------------------------------- *)
 
 let goal_prompt_text t =
   let reads_back s tt = (try aconv (parse_term s) tt with _ -> false) in
@@ -254,11 +254,11 @@ let goal_prompt_text t =
                   Some s4 when reads_back s4 tr -> ("REN_FULL", s4, tr)
                 | _ -> gta_name_attempt tr));;
 
-(* ---------------------------------------------------------------- *)
-(* Writing. Same columns as the input, the goal_text column rewritten;*)
-(* the goals with no readable text go to a second file. Every other  *)
-(* failure stops before open_out.                                    *)
-(* ---------------------------------------------------------------- *)
+(* ------------------------------------------------------------------- *)
+(* Writing. Same columns as the input, the goal_text column rewritten; *)
+(* the goals with no readable text go to a second file. Every other    *)
+(* failure stops before open_out.                                      *)
+(* ------------------------------------------------------------------- *)
 
 let gta_root = Filename.dirname (Filename.dirname (!mcts_data_dir));;
 
