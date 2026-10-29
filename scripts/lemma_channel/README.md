@@ -126,9 +126,8 @@ stage instead of run from the start.
 
 7. **Restated goals.** `lib/lemma_channel/restates_goal.ml` (`rsg_run`)
    marks the proposals that merely restate the goal, which are not
-   evidence of usefulness. Here the proposal is read in the type
-   context of the goal, so one whose variables collide in type with
-   the goal's is marked `term_fail` and not counted.
+   evidence of usefulness. The proposal is read as the gate and the
+   leaf search read it, by `parse_term` on its text alone.
    Output: `leaf_search_restates.tsv` (the previous file plus a
    `restates` column).
 
