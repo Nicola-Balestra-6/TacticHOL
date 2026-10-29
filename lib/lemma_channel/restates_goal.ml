@@ -10,15 +10,12 @@
    it too.
 
    Runs after the leaf search, on its output: the term column is read
-   from the file and the goal is found again by name. Here, and only
-   here, the proposal is read in the type context of the goal: the
-   types of the goal's variables are installed as implicit types before
-   parsing, as in the run that produced the reported numbers, so a
-   proposal whose variables collide in type with the goal's does not
-   parse and is marked term_fail. Appends a column `restates` with
-   RESTATES, no, term_fail (the text does not parse in the goal's type
-   context), lookup_fail (no theorem of that name), or - for a
-   non-valid row.
+   from the file and the goal is found again by name. The proposal is
+   read as the gate and the leaf search read it, by parse_term on its
+   text alone, with no type of the goal installed, so the term judged
+   is the term that was assumed and proved. Appends a column `restates`
+   with RESTATES, no, term_fail (the text does not parse), lookup_fail
+   (no theorem of that name), or - for a non-valid row.
    Refuses to overwrite. Requires mcts_init (). Fresh REPL.
 
    The input columns are read by position (name 1, verdict 3, term 11),
@@ -28,24 +25,11 @@
 let rsg_input  = ref "";;
 let rsg_output = ref "";;
 
-(* Reads a text with the types of the goal's variables installed as
-   implicit types; the previous implicit types are restored whatever
-   the outcome. *)
-let rsg_parse_in_goal_context (g : goal) (s : string) : term =
-  let saved = !the_implicit_types in
-  the_implicit_types := (tp_goal_var_types g) @ saved;
-  try
-    let t = parse_term s in
-    the_implicit_types := saved; t
-  with e ->
-    the_implicit_types := saved; raise e
-;;
-
 (* The predicate. A failed instantiation is the negative answer, not
    an error. *)
 let rsg_restates (g : goal) (s : string) : string =
   try
-    let a = rsg_parse_in_goal_context g s in
+    let a = parse_term s in
     let u : goal = ([("", ASSUME a)], snd g) in
     (try
        let (_, sg, _) = MATCH_ACCEPT_TAC (ASSUME a) u in
@@ -99,22 +83,24 @@ let rsg_run () : unit =
   Fun.protect ~finally:(fun () -> type_invention_warning := saved_warning)
     rsg_run_unguarded;;
 
-(* Three cases: two must trigger the predicate, one must not. If the
+(* Four cases: two must trigger the predicate, two must not. If the
    second does not, the predicate measures alpha-equivalence and not
-   instantiation. *)
+   instantiation. The fourth names its variable like the goal's with
+   another type: read on its own it parses and does not restate the
+   goal; read with the goal's types installed it would not parse. *)
 let rsg_selftest () : unit =
   let case lbl g_tm s expect =
     let r = rsg_restates ([], g_tm) s in
-    let ok = ((r = "RESTATES") = expect) in
+    let ok = (r = expect) in
     if not ok then
-      Printf.printf "  FAILED  %s: expected %s, got %s\n%!"
-        lbl (if expect then "RESTATES" else "no") r;
+      Printf.printf "  FAILED  %s: expected %s, got %s\n%!" lbl expect r;
     ok in
-  let a = case "identical"    `!x:num. x = x` "!y:num. y = y"  true in
-  let b = case "more general" `(1:num) = 1`   "!x:num. x = x"  true in
-  let c = case "unrelated"    `!x:num. x = x` "T"              false in
-  let n_ok = List.length (List.filter (fun x -> x) [a;b;c]) in
-  Printf.printf "rsg_selftest: %d OK, %d FAILED\n%!" n_ok (3 - n_ok)
+  let a = case "identical"    `!x:num. x = x` "!y:num. y = y"   "RESTATES" in
+  let b = case "more general" `(1:num) = 1`   "!x:num. x = x"   "RESTATES" in
+  let c = case "unrelated"    `!x:num. x = x` "T"               "no" in
+  let d = case "same name, other type" `!x:int. x = x` "!x:real. x = x" "no" in
+  let n_ok = List.length (List.filter (fun x -> x) [a;b;c;d]) in
+  Printf.printf "rsg_selftest: %d OK, %d FAILED\n%!" n_ok (4 - n_ok)
 ;;
 
-ignore (rsg_parse_in_goal_context, rsg_restates, rsg_run, rsg_selftest);;
+ignore (rsg_restates, rsg_run, rsg_selftest);;
